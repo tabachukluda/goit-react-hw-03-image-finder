@@ -15,7 +15,7 @@ export class App extends Component {
     pageNr: 1,
     modalOpen: false,
     modalImg: '',
-    modalAlt: '',
+    modalAlt: '',    
   };
 
   handleSubmit = async (e) => {
@@ -31,17 +31,22 @@ export class App extends Component {
     this.setState({ isLoading: true });
 
     try {
-      const response = await fetchImages(searchValue, 1);
+    const { totalHits, imagesData } = await fetchImages(searchValue, 1);
 
-      if (response.length < 1) {
-        this.setState({ images: [], currentSearch: searchValue, pageNr: 1 });
-        Notiflix.Notify.failure(
-          'Sorry, there are no images matching your search query. Please try again.'
-        );
-      } else {
-        this.setState({ images: response, currentSearch: searchValue, pageNr: 1 });
-      }
-    } catch (error) {
+    if (imagesData.length < 1) {
+      this.setState({ images: [], currentSearch: searchValue, pageNr: 1 });
+      Notiflix.Notify.failure(
+        'Sorry, there are no images matching your search query. Please try again.'
+      );
+    } else {
+      this.setState({
+        images: imagesData,
+        currentSearch: searchValue,
+        pageNr: 1,
+        totalHits: totalHits, 
+      });
+    }
+  } catch (error)  {
       console.error('Error fetching images:', error);
       Notiflix.Notify.failure('An error occurred while fetching images.');
     }
@@ -53,14 +58,17 @@ export class App extends Component {
   this.setState({ isLoading: true });
 
   try {
+    const nextPageNr = this.state.pageNr + 1;
+    
     const response = await fetchImages(
       this.state.currentSearch,
-      this.state.pageNr + 1
+      nextPageNr
     );
 
     this.setState((prevState) => ({
-      images: [...prevState.images, ...response],
-      pageNr: prevState.pageNr + 1,
+      images: [...prevState.images, ...response.imagesData],
+      pageNr: nextPageNr, 
+      totalHits: response.totalHits, 
     }));
   } catch (error) {
     console.error('Error fetching images:', error);
@@ -104,37 +112,39 @@ export class App extends Component {
   }
 
   render() {
-    return (
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr',
-          gridGap: '16px',
-          paddingBottom: '24px',
-        }}
-      >
-        {this.state.isLoading ? (
-          <Loader />
-        ) : (
-          <React.Fragment>
-            <Searchbar onSubmit={this.handleSubmit} />
-            <ImageGallery
-              onImageClick={this.handleImageClick}
-              images={this.state.images}
-            />
-            {this.state.images.length > 0 ? (
-              <Button onClick={this.loadMoreImages} />
-            ) : null}
-          </React.Fragment>
-        )}
-        {this.state.modalOpen ? (
-          <Modal
-            src={this.state.modalImg}
-            alt={this.state.modalAlt}
-            handleClose={this.handleModalClose}
+    const { isLoading, images, modalOpen, modalImg, modalAlt, totalHits } = this.state;
+
+  return (
+    <div
+      style={{
+        display: 'grid',
+        gridTemplateColumns: '1fr',
+        gridGap: '16px',
+        paddingBottom: '24px',
+      }}
+    >
+        {isLoading ? (
+        <Loader />
+      ) : (
+        <React.Fragment>
+          <Searchbar onSubmit={this.handleSubmit} />
+          <ImageGallery
+            onImageClick={this.handleImageClick}
+            images={images}
           />
-        ) : null}
-      </div>
+          {images.length < totalHits ? (
+            <Button onClick={this.loadMoreImages} />
+          ) : null}
+        </React.Fragment>
+      )}
+      {modalOpen ? (
+        <Modal
+          src={modalImg}
+          alt={modalAlt}
+          handleClose={this.handleModalClose}
+        />
+      ) : null}
+    </div>
     );
   }
 }
