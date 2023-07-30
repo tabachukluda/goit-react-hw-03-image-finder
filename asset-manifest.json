@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/goit-react-hw-03-image-finder/static/css/main.99d156ca.css",
-    "main.js": "/goit-react-hw-03-image-finder/static/js/main.cfd28dff.js",
+    "main.js": "/goit-react-hw-03-image-finder/static/js/main.386de796.js",
     "static/media/1647652882_34-amiel-club-p-kartinki-svetlii-fon-36.jpg": "/goit-react-hw-03-image-finder/static/media/1647652882_34-amiel-club-p-kartinki-svetlii-fon-36.6145f1fee69093180d6a.jpg",
     "index.html": "/goit-react-hw-03-image-finder/index.html",
     "main.99d156ca.css.map": "/goit-react-hw-03-image-finder/static/css/main.99d156ca.css.map",
-    "main.cfd28dff.js.map": "/goit-react-hw-03-image-finder/static/js/main.cfd28dff.js.map"
+    "main.386de796.js.map": "/goit-react-hw-03-image-finder/static/js/main.386de796.js.map"
   },
   "entrypoints": [
     "static/css/main.99d156ca.css",
-    "static/js/main.cfd28dff.js"
+    "static/js/main.386de796.js"
   ]
 }
